@@ -40,8 +40,21 @@ def save():
     if len(website) == 0 or len(password) == 0 or len(login) == 0:
         messagebox.showerror(title="Oops", message="Please make sure to fill every fields")
     else:
-        with open("data.json", "w") as data_file:
-            json.dump(new_data, data_file, indent=4)
+        try:
+            with open("data.json", "r") as data_file:
+                # Reading current data
+                data = json.load(data_file)
+        except FileNotFoundError:
+            # json file doesn't exist, no data to read, creating the file with new_data
+            with open("data.json", "w") as data_file:
+                json.dump(new_data, data_file, indent=4)
+        else:
+            # Updating existing data with new one
+            data.update(new_data)
+            with open("data.json", "w") as data_file:
+                # writing the file with all data
+                json.dump(new_data, data_file, indent=4)
+        finally:
             website_entry.delete(0, END)
             password_entry.delete(0, END)
         messagebox.showinfo(title="Success", message=f"The details for {website} have been saved.")
