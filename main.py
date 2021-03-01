@@ -60,6 +60,27 @@ def save():
         messagebox.showinfo(title="Success", message=f"The details for {website} have been saved.")
 
 
+# ---------------------------- SEARCH TOOL ------------------------------- #
+def search():
+    website = website_entry.get()
+    if len(website) == 0:
+        messagebox.showinfo(title="Website empty", message="Please say which website you want to search.")
+        return
+    try:
+        with open("data.json", "r") as data_file:
+            # Reading current data
+            data = json.load(data_file)
+    except FileNotFoundError:
+        # json file doesn't exist, no data to read, creating the file with new_data
+        messagebox.showinfo(title="File not found", message="You have never entered any data.")
+    else:
+        if website in data:
+            results = data[website]
+            messagebox.showinfo(title=website, message=f"Login: {results['login']}\nPassword: {results['password']}")
+        else:
+            messagebox.showinfo(title="Website not found", message=f"You have no data for the {website} website.")
+
+
 # ---------------------------- UI SETUP ------------------------------- #
 window = Tk()
 window.title("Password Manager")
@@ -72,9 +93,12 @@ canvas.grid(column=1, row=0, pady=2)
 
 website_label = Label(text="Website:")
 website_label.grid(column=0, row=1, pady=2)
-website_entry = Entry(width=35)
-website_entry.grid(column=1, row=1, columnspan=2, sticky="EW", pady=2)
+website_entry = Entry()
+website_entry.grid(column=1, row=1, sticky="EW", pady=2)
 website_entry.focus()
+
+search_button = Button(text="Search", command=search)
+search_button.grid(column=2, row=1, sticky="EW", padx=2, pady=2)
 
 login_label = Label(text="Email/Username:")
 login_label.grid(column=0, row=2, pady=2)
@@ -88,7 +112,7 @@ password_label.grid(column=0, row=3, pady=2)
 password_entry = Entry()
 password_entry.grid(column=1, row=3, sticky="EW", pady=2)
 generate_button = Button(text="Generate Password", command=generate_password)
-generate_button.grid(column=2, row=3, sticky="EW", pady=2)
+generate_button.grid(column=2, row=3, sticky="EW", padx=2, pady=2)
 
 Add_button = Button(text="Add", width=35, command=save)
 Add_button.grid(column=1, row=4, columnspan=2, sticky="EW", pady=2)
